@@ -18,7 +18,7 @@ cannonXChanges = 0
 
 ballonImage = pyg.image.load('balloon.png')
 ballonXCoordinate = random.randint(0, 736)
-ballonYCoordinate = 450
+ballonYCoordinate = 0
 ballonXChange = 0.3
 ballonYChange = 20
 
@@ -34,11 +34,12 @@ bulletText = pyg.font.Font('freesansbold.ttf', 32)
 bulletTextXCoordinate = 20
 bulletTextYCoordinate = 20
 
-gameOverText = pyg.font.Font('freesansbold.ttf',64)
+gameOverTitle = False
+gameOverText = pyg.font.Font('game_over.ttf',128)
 
 def gameOver():
     overText = gameOverText.render("GAME OVER",True,(0,0,0))
-    screenWindow.blit(overText,(200,200))
+    screenWindow.blit(overText,(250,200))
 
 def missedBulletText(xCoordinate, yCoordinate):
     missed = bulletText.render("Bullets: " + str(missedBullets), True, (0, 0, 0))
@@ -108,7 +109,8 @@ while screenOpen:
         ballonYCoordinate += ballonYChange
 
     if bulletYCoordinate <= 0:
-        missedBullets += 1
+        if not gameOverTitle:
+            missedBullets += 1
         bulletYCoordinate = 530
         bullet_state = 'ready'
 
@@ -116,14 +118,18 @@ while screenOpen:
         fireBullet(bulletXCoordinate, bulletYCoordinate)
         bulletYCoordinate -= bulletYChange
 
-    if overCollision:
-        gameOver()
+
+
+    if collision or overCollision:
         while True:
-            bulletYCoordinate = 530
             bullet_state = 'ready'
+            bulletYCoordinate = 530
             ballonYCoordinate = 1500
+            gameOverTitle = True
             break
 
+    if gameOverTitle:
+        gameOver()
     ballon(ballonXCoordinate, ballonYCoordinate)
     player(cannonXCoordinate, cannonYCoordinate)
     missedBulletText(bulletTextXCoordinate, bulletTextYCoordinate)
